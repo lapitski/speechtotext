@@ -34,7 +34,7 @@ class SpeechToTextScreen extends StatefulWidget {
 class _SpeechToTextScreenState extends State<SpeechToTextScreen> {
   final SpeechToText _speechToText = SpeechToText();
   bool _speechEnabled = false;
-  List<String> _recognizedWords = [];
+  final List<String> _recognizedWords = [];
   String _currentPhrase = '';
   List<LocaleName> locales = [];
 
@@ -88,7 +88,7 @@ class _SpeechToTextScreenState extends State<SpeechToTextScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Speech Demo'),
+        title: const Text('Speech to text'),
       ),
       body: _speechEnabled
           ? Center(
@@ -96,8 +96,8 @@ class _SpeechToTextScreenState extends State<SpeechToTextScreen> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
                   Container(
-                    padding: EdgeInsets.all(16),
-                    child: Text(
+                    padding: const EdgeInsets.all(16),
+                    child: const Text(
                       'Recognized words:',
                       style: TextStyle(fontSize: 20.0),
                     ),
