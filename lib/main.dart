@@ -15,8 +15,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Flutter Demo',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+      theme: ThemeData.dark(
         useMaterial3: true,
       ),
       home: const SpeechToTextScreen(),
@@ -34,7 +33,7 @@ class SpeechToTextScreen extends StatefulWidget {
 class _SpeechToTextScreenState extends State<SpeechToTextScreen> {
   final SpeechToText _speechToText = SpeechToText();
   bool _speechEnabled = false;
-  List<String> _recognizedWords = [];
+  final List<String> _recognizedWords = [];
   String _currentPhrase = '';
   List<LocaleName> locales = [];
 
@@ -54,7 +53,7 @@ class _SpeechToTextScreenState extends State<SpeechToTextScreen> {
   }
 
   onStatus(String status) {
-    log('Status - $status' );
+    log('Status - $status');
   }
 
   void _startListening() async {
@@ -65,7 +64,10 @@ class _SpeechToTextScreenState extends State<SpeechToTextScreen> {
         onResult: _onSpeechResult,
         localeId: 'en_US',
         listenOptions: SpeechListenOptions(
-            autoPunctuation: true, listenMode: ListenMode.dictation));
+          autoPunctuation: true,
+          listenMode: ListenMode.dictation,
+          partialResults: true,
+        ));
     log('DONE');
     setState(() {});
   }
@@ -79,53 +81,58 @@ class _SpeechToTextScreenState extends State<SpeechToTextScreen> {
     setState(() {
       _currentPhrase = result.recognizedWords;
     });
-  
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Speech Demo'),
+        title: const Text('Speech to text'),
       ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Container(
-              padding: EdgeInsets.all(16),
-              child: Text(
-                'Recognized words:',
-                style: TextStyle(fontSize: 20.0),
+      body: _speechEnabled
+          ? Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  Container(
+                    padding: const EdgeInsets.all(16),
+                    child: const Text(
+                      'Recognized words:',
+                      style: TextStyle(fontSize: 20.0),
+                    ),
+                  ),
+                  Expanded(
+                    child: Container(
+                      padding: const EdgeInsets.all(16),
+                      child: ListView.builder(
+                          itemCount: _recognizedWords.length,
+                          itemBuilder: (context, index) {
+                            return Column(
+                              children: [
+                                Text('Me: ${_recognizedWords[index]}'),
+                                if (index == _recognizedWords.length - 1 &&
+                                    _currentPhrase.isNotEmpty)
+                                  Text('Me: $_currentPhrase'),
+                              ],
+                            );
+                          }),
+                    ),
+                  ),
+                ],
               ),
+            )
+          : const Center(
+              child: CircularProgressIndicator.adaptive(),
             ),
-            Expanded(
-              child: Container(
-                padding: const EdgeInsets.all(16),
-                child: ListView.builder(
-                    itemCount: _recognizedWords.length,
-                    itemBuilder: (context, index) {
-                      return Column(
-                        children: [
-                          Text('Me: ${_recognizedWords[index]}'),
-                          if (index == _recognizedWords.length - 1 &&
-                              _currentPhrase.isNotEmpty)
-                            Text('Me: $_currentPhrase'),
-                        ],
-                      );
-                    }),
-              ),
-            ),
-          ],
-        ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed:
-            // If not yet listening for speech start, otherwise stop
-            _speechToText.isNotListening ? _startListening : _stopListening,
-        tooltip: 'Listen',
-        child: Icon(_speechToText.isListening ? Icons.stop : Icons.mic),
-      ),
+      floatingActionButton: _speechEnabled
+          ? FloatingActionButton(
+              onPressed: _speechToText.isNotListening
+                  ? _startListening
+                  : _stopListening,
+              tooltip: 'Listen',
+              child: Icon(_speechToText.isListening ? Icons.stop : Icons.mic),
+            )
+          : null,
     );
   }
 }
