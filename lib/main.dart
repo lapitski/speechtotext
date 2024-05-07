@@ -54,7 +54,7 @@ class _SpeechToTextScreenState extends State<SpeechToTextScreen> {
   }
 
   onStatus(String status) {
-    log('Status - $status' );
+    log('Status - $status');
   }
 
   void _startListening() async {
@@ -65,7 +65,10 @@ class _SpeechToTextScreenState extends State<SpeechToTextScreen> {
         onResult: _onSpeechResult,
         localeId: 'en_US',
         listenOptions: SpeechListenOptions(
-            autoPunctuation: true, listenMode: ListenMode.dictation));
+          autoPunctuation: true,
+          listenMode: ListenMode.dictation,
+          partialResults: true,
+        ));
     log('DONE');
     setState(() {});
   }
@@ -79,7 +82,6 @@ class _SpeechToTextScreenState extends State<SpeechToTextScreen> {
     setState(() {
       _currentPhrase = result.recognizedWords;
     });
-  
   }
 
   @override
