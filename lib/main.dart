@@ -90,44 +90,52 @@ class _SpeechToTextScreenState extends State<SpeechToTextScreen> {
       appBar: AppBar(
         title: Text('Speech Demo'),
       ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Container(
-              padding: EdgeInsets.all(16),
-              child: Text(
-                'Recognized words:',
-                style: TextStyle(fontSize: 20.0),
+      body: _speechEnabled
+          ? Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  Container(
+                    padding: EdgeInsets.all(16),
+                    child: Text(
+                      'Recognized words:',
+                      style: TextStyle(fontSize: 20.0),
+                    ),
+                  ),
+                  Expanded(
+                    child: Container(
+                      padding: const EdgeInsets.all(16),
+                      child: ListView.builder(
+                          itemCount: _recognizedWords.length,
+                          itemBuilder: (context, index) {
+                            return Column(
+                              children: [
+                                Text('Me: ${_recognizedWords[index]}'),
+                                if (index == _recognizedWords.length - 1 &&
+                                    _currentPhrase.isNotEmpty)
+                                  Text('Me: $_currentPhrase'),
+                              ],
+                            );
+                          }),
+                    ),
+                  ),
+                ],
               ),
+            )
+          : const Center(
+              child: CircularProgressIndicator.adaptive(),
             ),
-            Expanded(
-              child: Container(
-                padding: const EdgeInsets.all(16),
-                child: ListView.builder(
-                    itemCount: _recognizedWords.length,
-                    itemBuilder: (context, index) {
-                      return Column(
-                        children: [
-                          Text('Me: ${_recognizedWords[index]}'),
-                          if (index == _recognizedWords.length - 1 &&
-                              _currentPhrase.isNotEmpty)
-                            Text('Me: $_currentPhrase'),
-                        ],
-                      );
-                    }),
-              ),
-            ),
-          ],
-        ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed:
-            // If not yet listening for speech start, otherwise stop
-            _speechToText.isNotListening ? _startListening : _stopListening,
-        tooltip: 'Listen',
-        child: Icon(_speechToText.isListening ? Icons.stop : Icons.mic),
-      ),
+      floatingActionButton: _speechEnabled
+          ? FloatingActionButton(
+              onPressed:
+                  // If not yet listening for speech start, otherwise stop
+                  _speechToText.isNotListening
+                      ? _startListening
+                      : _stopListening,
+              tooltip: 'Listen',
+              child: Icon(_speechToText.isListening ? Icons.stop : Icons.mic),
+            )
+          : null,
     );
   }
 }
