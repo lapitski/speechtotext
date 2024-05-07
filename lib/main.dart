@@ -79,8 +79,7 @@ class _SpeechToTextScreenState extends State<SpeechToTextScreen> {
     setState(() {
       _currentPhrase = result.recognizedWords;
     });
-    print(result.finalResult);
-    print(_currentPhrase);
+  
   }
 
   @override
