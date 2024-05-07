@@ -126,11 +126,9 @@ class _SpeechToTextScreenState extends State<SpeechToTextScreen> {
             ),
       floatingActionButton: _speechEnabled
           ? FloatingActionButton(
-              onPressed:
-                  // If not yet listening for speech start, otherwise stop
-                  _speechToText.isNotListening
-                      ? _startListening
-                      : _stopListening,
+              onPressed: _speechToText.isNotListening
+                  ? _startListening
+                  : _stopListening,
               tooltip: 'Listen',
               child: Icon(_speechToText.isListening ? Icons.stop : Icons.mic),
             )
